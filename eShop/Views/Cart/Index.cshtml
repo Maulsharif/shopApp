@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "title";
+ 
+}
+<h3>Корзина</h3>
+@if (ViewBag.cart.Count < 1)
+{
+    <p>Корзина пуста</p>
+}
+else
+{
+   <table  class="table">
+       <tr>
+           <th>Товар</th>
+           <th>Кол-во</th>
+           <th>Цена</th>
+           <th>Сумма</th>
+           
+       </tr>
+       @foreach (var item in ViewBag.cart)
+       {
+           <tr>
+             
+               <td>
+                    <img  alt="product" src="@item.Product.Image" width="60" /> <br/>
+                   @item.Product.Name
+               </td>
+               <td><span><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Id">-</a></span> @item.Quantity
+                   <span> <a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Id">+</a></span></td>
+               <td>@item.Product.Price</td>
+               <td>@(item.Product.Price * item.Quantity)</td>
+           </tr>
+       }
+       <tr>
+           <td>Итого</td>
+           <td></td>
+            <td></td>
+           <td>
+               @ViewBag.total
+           </td>
+       </tr>
+   </table> 
+}
+
+<br>
+<a asp-controller="product" asp-action="index">Continue Shopping</a>

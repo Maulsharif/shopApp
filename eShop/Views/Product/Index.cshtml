@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewBag.Title = "title";
+  
+}
+
+<h2>Список товаров</h2>
+<a asp-controller="Product" asp-action="Add">Добавить</a>
+<div class="card-deck">
+  @foreach(var p in  @Model)
+      {
+          <a asp-action="Add"><div class="card" >
+                           <img class="card-img-top" src="@p.Image" alt="Card image cap">
+                           <div class="card-body">
+                               <h5 class="card-title">@p.Name</h5>
+                               <p class="card-text small">Description text</p>
+                           </div>
+                           <div class="card-footer">
+                               <p class="text-muted">@p.Price тг   <span>   <a id="add" + @p.Id  onclick="addCart(@p.Id)">Добавить в корзину</a>                       </span></p> 
+                           </div>
+                       </div></a> 
+      }
+ 
+</div>
+
+<script>
+
+       function addCart(prop){
+          console.log(prop);
+            $.ajax({
+                   type: 'get',
+                   url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
+                
+                   success: function (res) {
+                     console.log("res",res);
+                           $('#my-cart').html('В корзине ' +res+'товаров');
+                     
+                   }
+               })
+           
+       }
+       
+  
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
