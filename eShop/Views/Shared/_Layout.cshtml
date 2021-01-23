@@ -6,7 +6,9 @@
     <title>@ViewData["Title"] - eShop</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+    <link rel="script" href="js/site.js" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+    
 </head>
 <body>
     <header>
@@ -25,7 +27,7 @@
                        
                     </ul>
                     <div >
-                        <a asp-action="Index"  id="my-cart" asp-controller="Cart">Корзина</a>
+                        <a asp-action="Index" asp-controller="Cart"><img alt="Корзина"  src="images/shopping-cart .png"/><span id="my-cart"></span></a>
                     </div>
 
                 </div>
@@ -47,7 +49,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script>
-$(function() {
+$(function showItemNumbers() {
     $.ajax
     ({
         type: 'get',
@@ -57,11 +59,13 @@ $(function() {
             console.log("res",res);
             if(res>0)
             {
-                $('#my-cart').html('В корзине ' +res+'товаров');
+                $('#my-cart').html(res);
+                $('#my-cart').addClass("red-number");
             }
-            else {
-                $('#my-cart').html('Корзина');
+            else{
+                $('#my-cart').removeClass("red-number");
             }
+
         }
     });
 });

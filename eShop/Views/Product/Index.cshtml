@@ -25,20 +25,21 @@
 
 <script>
 
-       function addCart(prop){
-          console.log(prop);
-            $.ajax({
-                   type: 'get',
-                   url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
-                
-                   success: function (res) {
-                     console.log("res",res);
-                           $('#my-cart').html('В корзине ' +res+'товаров');
-                     
-                   }
-               })
-           
-       }
+      function addCart(prop){
+                console.log(prop);
+                  $.ajax({
+                         type: 'get',
+                         url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
+                      
+                         success: function (res) {
+                           console.log("res",res);
+                                  $('#my-cart').html(res);
+                                    $('#my-cart').addClass("red-number");
+                           
+                         }
+                     })
+                 
+             }
        
   
 </script>
