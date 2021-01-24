@@ -43,4 +43,9 @@ else
 }
 
 <br>
-<a asp-controller="product" asp-action="index">Continue Shopping</a>
+@if (ViewBag.cart.Count > 0)
+{
+    <a class=" btn btn-success" asp-controller="Cart" asp-action="Order">Оформить заказ</a>
+}
+
+<a  class=" btn btn-primary" asp-action="Index" asp-controller="Product"> Вернутся к покупкам</a>

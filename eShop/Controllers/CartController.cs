@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using eShop.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,36 +9,35 @@ namespace eShop.Controllers
 {
     public class CartController : Controller
     {
-        private ShopContext _context;
-
-        public CartController(ShopContext context)
+        private readonly ShopContext _db;
+        public CartController(ShopContext db)
         {
-            _context = context;
+            _db = db ?? throw new ArgumentNullException(nameof(db));
         }
-
+        
+        [HttpGet]
         public IActionResult Index()
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
             if (cart != null)
             {
                   ViewBag.cart = cart;
-                            ViewBag.total = cart.Sum(item => item.Product.Price * item.Quantity);
+                  ViewBag.total = cart.Sum(item => item.Product.Price * item.Quantity);
             }
             else
             {
                 ViewBag.cart = new List<Item>{};
 
             }
-          
             return View();
         }
 
        [HttpGet]
         public IActionResult AddToCart(int id)
         {
-            List<Item> cart = new List<Item>();
+           var cart = new List<Item>();
           
-            Product product = _context.Products.FirstOrDefault(p => p.Id == id);
+            Product product = _db.Products.FirstOrDefault(p => p.Id == id);
             if (HttpContext.Session.GetObjectFromJson<List<Item>>("cart") == null)
             {
                
@@ -48,7 +49,7 @@ namespace eShop.Controllers
             else
             {
                  cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
-                int index = isExist(id);
+                int index = IsExist(id);
                 if (index != -1)
                 {
                     cart[index].Quantity++;
@@ -66,16 +67,23 @@ namespace eShop.Controllers
       
         public IActionResult Remove(int id)
         {
-            List<Item> cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
-            int index = isExist(id);
+           var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
+            int index = IsExist(id);
             cart.RemoveAt(index);
             HttpContext.Session.SetObjectAsJson("cart", cart);
             return RedirectToAction("Index");
         }
 
-        private int isExist(int id)
+        public void CleanCart()
         {
-            List<Item> cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
+            var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
+            cart.Clear();
+            HttpContext.Session.SetObjectAsJson("cart", cart);
+        }
+
+        private int IsExist(int id)
+        {
+           var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
             for (int i = 0; i < cart.Count; i++)
             {
                 if (cart[i].Product.Id.Equals(id))
@@ -88,14 +96,51 @@ namespace eShop.Controllers
         
         public int CartState()
         {
-            List<Item> cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
-            if (cart.Count > 0)
+            var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
+            return cart?.Sum(p => p.Quantity) ?? 0;
+        }
+
+        public IActionResult Order()
+        {
+         var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
+         
+            if (cart != null)
             {
-                return cart.Sum(p => p.Quantity);
+                ViewBag.Cart = cart;
+                ViewBag.Total = cart.Sum(item => item.Product.Price * item.Quantity);
             }
             
-            return 0;
+            return View();
         }
-        
+
+        [HttpPost]
+        public async Task<ActionResult> Order(OrderViewModel order)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
+            
+            if (ModelState.IsValid)
+            {
+                if (cart != null)
+                {
+                    for (int i = 0; i < cart.Count; i++)
+                    {
+                      await _db.Orders.AddAsync(new Order()
+                        {
+                            CustomerName = order.CustomerName,
+                            ProductId = cart[i].Product.Id,
+                            Quantity = cart[i].Quantity,
+                            PhoneNumber = order.PhoneNumber,
+                            Address = order.Address
+                        });
+                    }
+                    
+                    await _db.SaveChangesAsync();
+                    CleanCart();
+                   
+                    return RedirectToAction("Index", "Product");
+                }
+            }
+            return View(order);
+        }
     }
 }

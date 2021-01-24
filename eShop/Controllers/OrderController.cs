@@ -1,38 +1,26 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using eShop.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShop.Controllers
 {
     public class OrderController : Controller
     {
-        private ShopContext _db;
+        private readonly ShopContext _db;
 
         public OrderController(ShopContext db)
         {
-            _db = db;
+            _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-           return  View(_db.Orders);
+           return  View(_db.Orders.Include(b => b.Product));
         }
-        public IActionResult Create()
-        {
-            return  View();
-        }
-        
-        
-        [HttpPost]
-        public async Task<ActionResult>  Create(Order order)
-        {
-            if (order != null)
-            {
-               await _db.Orders.AddAsync(order);
-               await  _db.SaveChangesAsync();
-            }
-            return  View(order);
-        }
+      
     }
 }

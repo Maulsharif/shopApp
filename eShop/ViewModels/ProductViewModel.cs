@@ -8,7 +8,8 @@ namespace eShop.ViewModels
 {
     public class ProductViewModel
     {
-      
+
+        public int Id { get; set; }
         [Required(ErrorMessage = "Поле название обязательно для заполнения")]
    
       //  [Remote("NameLength","Validation", ErrorMessage = "Название должно быть длинее двух символов")]

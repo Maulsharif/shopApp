@@ -1,0 +1,72 @@
+﻿@model OrderViewModel
+
+@{
+    ViewBag.Title = "title";
+  
+}
+
+ <div class="row justify-content pt-3">
+     <div class="col ">
+         <div class="box-shadow p-5">
+               <h2>Выбранные товары</h2>
+                      @foreach (var item in ViewBag.Cart)
+                      {
+                          <p> @item.Product.Name X @item.Quantity ШТ</p>
+             
+                          <img alt="product" src="~/@item.Product.Image" width="100"/>
+                          <p>@(item.Product.Price * item.Quantity) ТГ</p>
+             
+             
+                      }
+                      <h4>Сумма к оплате: @ViewBag.Total тг</h4>
+         </div>
+       
+     </div>
+    <div class="col-md-auto">
+       
+      </div>
+     <div class="col-6">
+         <div class=" box-shadow p-5">
+               <h2>Оформить заказ</h2>
+                      <form asp-action="Order" asp-controller="Cart">
+                          <div class="form-group">
+                              <label >ФИО</label>
+                              <input asp-for="CustomerName" type="text" class="form-control" placeholder="ФИО">
+                                <span asp-validation-for="CustomerName"></span>
+                          </div>
+                          <div class="form-group">
+                              <label >Адрес доставки</label>
+                              <input asp-for="Address" type="text" class="form-control" placeholder="Адрес">
+                                <span asp-validation-for="Address"></span>
+                          </div>
+                          <div class="form-group">
+                              <label >Телефон</label>
+                              <input asp-for="PhoneNumber" id="phone-mask" type="text" class="form-control" placeholder="Телефон">
+                                <span asp-validation-for="PhoneNumber"></span>
+                          </div>
+                          <div class="form-group">
+                              <label >Сумма к оплате</label>
+                              <h4>@ViewBag.Total тг</h4>
+                          </div>
+                       
+                          
+                          <button type="submit" class="btn btn-primary">Оформить</button>
+                      </form>
+         </div>
+       
+     </div>
+  </div>
+
+@section Scripts{
+    @{
+        await  Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+      const element = document.getElementById('phone-mask');
+      const maskOptions = {
+        mask: '+{7}(700)000-00-00'
+      };
+      const mask = IMask(element, maskOptions);
+    </script>
+  
+}

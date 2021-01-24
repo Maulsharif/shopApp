@@ -1,0 +1,48 @@
+﻿@model Product
+
+@{
+    ViewBag.Title = "О товаре";
+    Layout = "_Layout";
+}
+  <h1 class="text-center text-info"> О товаре </h1>
+<div class="row">
+    <div class="col p-3">
+        <img alt="product" src="~/@Model.Image" width="300"/>
+    </div>
+    <div class="col  p-3">
+        <h3>Название: @Model.Name</h3>
+        <p>Цена: @Model.Price</p>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem, excepturi!
+        </p>
+        
+        <button class="btn btn-success text-white " onclick="addCart(@Model.Id)">Добавить в корзину</button>
+        
+        <div class=" pt-3">
+            <a class="btn btn-primary mb-2" asp-action="Edit" asp-controller="Product" asp-route-id="@Model.Id">Редактировать</a><br/>
+            <button class=" btn btn-danger" data-toggle="modal" data-target="#delete-@Model.Id">Удалить</button>
+            
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+     function addCart(prop)
+            {
+              console.log(prop);
+               $.ajax
+               ({
+                 type: 'get',
+                 url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
+                 success: function (res) 
+                  {
+                    console.log("res",res);
+                     $('#my-cart').html(res);
+                     $('#my-cart').addClass("red-number");
+                  }
+               })
+            }
+    </script>
+   
+}

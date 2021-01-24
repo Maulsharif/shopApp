@@ -1,0 +1,16 @@
+﻿@model List<Product>
+
+<div class="container mt-1">
+    @if (@ViewBag.Error == null)
+    {
+        @foreach (var product in @Model)
+            {
+                <a asp-action="Detail" asp-controller="Product" asp-route-id="@product.Id" class="text-center"> @product.Name</a>
+            }
+    }
+    else
+    {
+       <p class="text-center text-danger">@ViewBag.Error</p> 
+    }
+    
+</div>

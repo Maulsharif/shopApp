@@ -5,43 +5,73 @@
 }
 
 <h2>Список товаров</h2>
-<a asp-controller="Product" asp-action="Add">Добавить</a>
-<div class="card-deck">
+<a class="btn btn-primary" asp-controller="Product" asp-action="Add">Добавить</a>
+<div class="row pt-3">
   @foreach(var p in  @Model)
-      {
-          <a asp-action="Add"><div class="card" >
-                           <img class="card-img-top" src="@p.Image" alt="Card image cap">
-                           <div class="card-body">
-                               <h5 class="card-title">@p.Name</h5>
-                               <p class="card-text small">Description text</p>
-                           </div>
-                           <div class="card-footer">
-                               <p class="text-muted">@p.Price тг   <span>   <a id="add" + @p.Id  onclick="addCart(@p.Id)">Добавить в корзину</a>                       </span></p> 
-                           </div>
-                       </div></a> 
-      }
+  {
+    
+    <div class="col  col-md-3 box-shadow p-3">
+      <a asp-action="Detail" asp-route-id="@p.Id">
+         <img class="card-img-top " src="@p.Image" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">@p.Name</h5>
+                <p class="card-text small">Lorem ipsum dolor sit amet.</p>
+              </div>
+              <div class="card-footer">
+                <p class="text">@p.Price тг <span> <a class="btn btn-primary text-white" onclick="addCart(@p.Id)"><small> Добавить в корзину</small></a></span></p>
+              </div>
+              <div>
+                <a class="btn btn-primary" asp-action="Edit" asp-controller="Product" asp-route-id="@p.Id">Редактировать</a>
+                <button class=" btn btn-danger" data-toggle="modal" data-target="#delete-@p.Id">Удалить</button>
+              </div>
+      </a>
+     
+    </div>
+    
+    <!-- Modal for delete confirm -->
+    <div class="modal fade" id="delete-@p.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+             <h3>Хотите удалить товар?</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+         
+          <div class="modal-footer">
+            <form asp-controller="Product" asp-action="Delete" asp-route-id="@p.Id" method="post">
+              <input type="submit" class="btn btn-danger" value="Удалить" />
+            </form>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+  }
  
 </div>
 
 <script>
 
-      function addCart(prop){
-                console.log(prop);
-                  $.ajax({
-                         type: 'get',
-                         url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
-                      
-                         success: function (res) {
-                           console.log("res",res);
-                                  $('#my-cart').html(res);
-                                    $('#my-cart').addClass("red-number");
-                           
-                         }
-                     })
-                 
-             }
-       
-  
+      function addCart(prop)
+      {
+        console.log(prop);
+         $.ajax
+         ({
+           type: 'get',
+           url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
+           success: function (res) 
+            {
+              console.log("res",res);
+               $('#my-cart').html(res);
+               $('#my-cart').addClass("red-number");
+            }
+         })
+      }
+            
 </script>
 
 
