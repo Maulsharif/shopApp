@@ -51,21 +51,36 @@
 
 @section Scripts{
     <script>
-     function addCart(prop)
-            {
-              console.log(prop);
-               $.ajax
-               ({
-                 type: 'get',
-                 url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
-                 success: function (res) 
-                  {
-                    console.log("res",res);
-                     $('#my-cart').html(res);
-                     $('#my-cart').addClass("red-number");
-                  }
-               })
-            }
+    function addCart(prop)
+         {
+          
+            $.ajax
+            ({
+              type: 'get',
+              url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
+              success: function () 
+               {
+                 $.ajax
+                    ({
+                        type: 'get',
+                        url:  '@Url.Action("CartState", "Cart")',
+                        success: function (res)
+                        {
+                            console.log("res",res);
+                            if(res>0)
+                            {
+                                $('#my-cart').html(res).addClass("red-number");
+                            
+                            }
+                            else{
+                                $('#my-cart').empty().removeClass("red-number");
+                            }
+                
+                        }
+                    });
+               }
+            })
+         }
     </script>
    
 }
