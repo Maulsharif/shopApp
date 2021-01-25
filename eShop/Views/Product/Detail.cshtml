@@ -17,14 +17,37 @@
         </p>
         
         <button class="btn btn-success text-white " onclick="addCart(@Model.Id)">Добавить в корзину</button>
-        
-        <div class=" pt-3">
-            <a class="btn btn-primary mb-2" asp-action="Edit" asp-controller="Product" asp-route-id="@Model.Id">Редактировать</a><br/>
-            <button class=" btn btn-danger" data-toggle="modal" data-target="#delete-@Model.Id">Удалить</button>
-            
-        </div>
+        @if (User.IsInRole("admin"))
+        {
+            <div class=" pt-3">
+                <a class="btn btn-primary mb-2" asp-action="Edit" asp-controller="Product" asp-route-id="@Model.Id">Редактировать</a><br/>
+                <button class=" btn btn-danger" data-toggle="modal" data-target="#delete-@Model.Id">Удалить</button>
+            </div>
+        }
+       
     </div>
 </div>
+
+ <!-- Modal for delete confirm -->
+    <div class="modal fade" id="delete-@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+             <h3>Хотите удалить товар?</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-footer">
+            <form asp-controller="Product" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+              <input type="submit" class="btn btn-danger" value="Удалить" />
+            </form>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 @section Scripts{
     <script>

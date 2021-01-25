@@ -1,15 +1,16 @@
 ﻿@{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Корзина";
  
 }
 <h3>Корзина</h3>
+<div id="cart-table-res">
 @if (ViewBag.cart.Count < 1)
 {
     <p>Корзина пуста</p>
 }
 else
 {
-   <table  class="table">
+   <table id="cart-res"  class="table">
        <tr>
            <th>Товар</th>
            <th>Кол-во</th>
@@ -19,14 +20,14 @@ else
        </tr>
        @foreach (var item in ViewBag.cart)
        {
-           <tr>
+           <tr id=@item.Product.Id>
              
                <td>
                     <img  alt="product" src="@item.Product.Image" width="60" /> <br/>
                    @item.Product.Name
                </td>
-               <td><span><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Id">-</a></span> @item.Quantity
-                   <span> <a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.Id">+</a></span></td>
+               <td><button onclick="Decrease(@item.Product.Id)" >-</button> <span id="number">@item.Quantity</span>
+                    <button onclick="Increase(@item.Product.Id)">+</button></td>
                <td>@item.Product.Price</td>
                <td>@(item.Product.Price * item.Quantity)</td>
            </tr>
@@ -48,4 +49,47 @@ else
     <a class=" btn btn-success" asp-controller="Cart" asp-action="Order">Оформить заказ</a>
 }
 
+</div>
 <a  class=" btn btn-primary" asp-action="Index" asp-controller="Product"> Вернутся к покупкам</a>
+@section Scripts
+{
+
+    <script>
+    function currentState() {
+        $.ajax
+         ({
+             type: 'get',
+             url:  '@Url.Action("CartState", "Cart")',
+              success: function (res)
+               {
+                 if(res>0)
+                    { $('#my-cart').html(res).addClass("red-number"); }
+                 else{ $('#my-cart').empty().removeClass("red-number"); }
+               }
+         });
+    }
+    </script>
+    <script>
+       function Decrease(prop)
+          {
+            let result = $.ajax({
+              type: "GET",
+              url:  '@Url.Action("Remove", "Cart")?id=' +prop,
+              async: false }).responseText;                                                 
+              $("#cart-table-res").html(result);
+               currentState();
+          }
+    </script>
+    <script>
+           function Increase(prop)
+              {
+                let result = $.ajax({
+                  type: "GET",
+                    url:  '@Url.Action("AddToCart", "Cart")?id=' +prop,
+                      async: false
+                        }).responseText;          
+                         $("#cart-table-res").html(result);
+                         currentState();
+              }
+        </script>
+}

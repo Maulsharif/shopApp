@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using eShop.Models;
+using eShop.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Controllers
@@ -36,13 +37,9 @@ namespace eShop.Controllers
         public IActionResult AddToCart(int id)
         {
            var cart = new List<Item>();
-          
-            Product product = _db.Products.FirstOrDefault(p => p.Id == id);
+           Product product = _db.Products.FirstOrDefault(p => p.Id == id);
             if (HttpContext.Session.GetObjectFromJson<List<Item>>("cart") == null)
             {
-               
-                
-               
                 cart.Add(new Item { Product = product, Quantity = 1 });
                 HttpContext.Session.SetObjectAsJson("cart", cart);
             }
@@ -60,8 +57,9 @@ namespace eShop.Controllers
                 }
                 HttpContext.Session.SetObjectAsJson("cart", cart);
             }
-
-            return Ok(cart.Sum(p=>p.Quantity));
+            ViewBag.total = cart.Sum(item => item.Product.Price * item.Quantity);
+            return PartialView("CartPartialView", cart);
+         
         }
 
       
@@ -69,9 +67,19 @@ namespace eShop.Controllers
         {
            var cart = HttpContext.Session.GetObjectFromJson<List<Item>>("cart");
             int index = IsExist(id);
-            cart.RemoveAt(index);
+            if (cart[index].Quantity == 1)
+            {
+                cart.RemoveAt(index);
+            }
+            else if (index != -1)
+            {
+                cart[index].Quantity--;
+            }
+            
             HttpContext.Session.SetObjectAsJson("cart", cart);
-            return RedirectToAction("Index");
+            ViewBag.total = cart.Sum(item => item.Product.Price * item.Quantity);
+            return PartialView("CartPartialView", cart);
+            
         }
 
         public void CleanCart()

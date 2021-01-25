@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using eShop.Models;
 using eShop.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -30,9 +31,12 @@ namespace eShop
             services.AddSession();
             services.AddTransient<FileUploadService>();
             string connection = Configuration.GetConnectionString("DefaultConnection");
-           // services.AddDbContext<ApplicationContext>(options =>
-               // options.UseSqlServer(connection));
-               services.AddDbContext<ShopContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<ShopContext>(options => options.UseSqlServer(connection));
+               services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                   .AddCookie(options =>
+                   {
+                       options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                   });
 
         }
         
@@ -54,6 +58,8 @@ namespace eShop
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
           
             app.UseSession();
 

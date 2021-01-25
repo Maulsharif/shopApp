@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using eShop.Models;
 using eShop.Services;
 using eShop.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -32,12 +33,14 @@ namespace eShop.Controllers
         }
         
         [HttpGet]
+        [Authorize(Roles = "admin")] 
         public IActionResult Add()
         {
             return View();
         }
         
         [HttpPost]
+        [Authorize(Roles = "admin")] 
         public async Task<ActionResult> Add(ProductViewModel model)
         {
             if (ModelState.IsValid)
@@ -64,6 +67,7 @@ namespace eShop.Controllers
 
         
         [HttpGet]
+        [Authorize(Roles = "admin")] 
         public IActionResult Edit(int id)
         {
             Product product =_db.Products.FirstOrDefault(p => p.Id == id);
@@ -83,6 +87,7 @@ namespace eShop.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "admin")] 
         public async Task<IActionResult> Edit(ProductViewModel model)
         {  Product product = _db.Products.FirstOrDefault(p=>p.Id==model.Id);
             if (ModelState.IsValid && product!=null)
@@ -121,10 +126,9 @@ namespace eShop.Controllers
           return View(product);
         }
         
-        
-        
         [HttpPost]
-        public IActionResult Delete(int id)
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult>Delete(int id)
         {
             Product product=_db.Products.FirstOrDefault(p=>p.Id==id);
             if (product == null)
@@ -132,28 +136,29 @@ namespace eShop.Controllers
                 return NotFound();
             }
             _db.Entry(product).State = EntityState.Deleted;
-            _db.SaveChangesAsync();
-            return RedirectToAction("Index");
+             await _db.SaveChangesAsync();
+             return RedirectToAction("Index");
         }
 
-       
+
         [HttpGet]
         public IActionResult SearchAjaxResult(string search)
-                {
-                   
-                        if (string.IsNullOrEmpty(search))
-                        {
-                            ViewBag.Error = "Введите имя  для поиска";
-                            return PartialView("PartialView", _db.Products.ToList());
-                        }
-                        search = search.ToUpper();
-                        List<Product> products = _db.Products
-                            .Where(e => e.Name.Contains(search)).ToList();
-                        if (products.Count == 0)
-                        {
-                            ViewBag.Error = "Совпадений не найдено";
-                        }
-                        return PartialView("PartialView", products);
-                }
+        {
+            if (string.IsNullOrEmpty(search))
+            {
+                ViewBag.Error = "Введите имя  для поиска";
+                return PartialView("PartialView", _db.Products.ToList());
+            }
+
+            search = search.ToUpper();
+           var products = _db.Products
+                .Where(e => e.Name.Contains(search)).ToList();
+            if (products.Count == 0)
+            {
+                ViewBag.Error = "Совпадений не найдено";
+            }
+
+            return PartialView("PartialView", products);
+        }
     }
 }

@@ -5,7 +5,7 @@
     {
         @foreach (var product in @Model)
             {
-                <a asp-action="Detail" asp-controller="Product" asp-route-id="@product.Id" class="text-center"> @product.Name</a>
+                <a asp-action="Detail" asp-controller="Product" asp-route-id="@product.Id" class="text-center"> @product.Name</a><br/>
             }
     }
     else

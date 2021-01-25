@@ -9,65 +9,60 @@
     <link rel="script" href="js/site.js" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/imask"></script>
-    
 </head>
 <body>
-   
 <header>
 
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark" style="background-color: #14474ce6;">
-
-        <a class="navbar-brand ml-5" asp-action="Index" asp-controller="Product">E-shop</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                <form class="form-inline my-2 my-lg-0">
-                    <input id="search" type="search" class="search-input search-form" placeholder="Введите название товара " name="search" autocomplete="off" aria-label="Search">
-                    <div class="popup-overlay" id="myModal">
-                        <div class="popup-content">
-                            <div class="scrollbar-3" id="style-4">
-                                <div class="force-overflow-2">
-                                    <div id="result"></div>
+        <div class="container">
+            <a class="navbar-brand" asp-action="Index" asp-controller="Product"><h3>E-shop</h3></a>
+              @if (User.IsInRole("admin"))
+              {
+                  <a class="navbar-brand" asp-action="Index" asp-controller="Order">Заказы</a>
+              }
+            
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                            <form class="form-inline my-2 my-lg-0">
+                                <input id="search" type="search" class="search-input search-form" placeholder="Введите название товара " name="search" autocomplete="off" aria-label="Search">
+                                <div class="popup-overlay" id="myModal">
+                                    <div class="popup-content">
+                                        <div class="scrollbar-3" id="style-4">
+                                            <div class="force-overflow-2">
+                                                <div id="result"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
+                         <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+            
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Cart"><img alt="Корзина"  src="~/images/shoping-cart.png"/><span id="my-cart"></span></a>
+                            </li>
+                            @if (User.Identity.IsAuthenticated)
+            
+                            {
+                                <li class="nav-item">
+                                    <a class="text-white btn  ml-4" asp-controller="Account" asp-action="Logout">Выйти</a>
+                                </li>
+                            }
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <a class="text-white btn  ml-4"  asp-controller="Account" asp-action="Login">Войти</a>
+                                </li>
+                            }
+                        </ul>
                     </div>
-                </form>
-            </div>
-        
-      
-        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-
-            <ul class="navbar-nav ml-auto">
-                @if (!User.Identity.IsAuthenticated)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="" asp-action="">Войти</a>
-                    </li>
-                }
-                <li class="nav-item">
-                   
-                <a asp-action="Index" asp-controller="Cart"><img alt="Корзина"  src="~/images/shoping-cart.png"/><span id="my-cart"></span></a>
-                                      
-                </li>
-              
-                       
-                        <div class="btn-group top-right-buttons">
-                            <button class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="text-white">Имя</span>
-                            </button>
-                           
-                        </div>
-            </ul>
-
         </div>
-
     </nav>
 </header>
-
-
 
 <div class="container">
         <main role="main" class="pb-3">
@@ -75,11 +70,11 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - eShop 
-        </div>
-    </footer>
+   <footer class="border-top footer text-muted">
+          <div class="container">
+              &copy; 2021 - E-shop 
+          </div>
+      </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
@@ -91,23 +86,18 @@ $(function showItemNumbers() {
         url:  '@Url.Action("CartState", "Cart")',
         success: function (res)
         {
-            console.log("res",res);
             if(res>0)
-            {
-                $('#my-cart').html(res);
-                $('#my-cart').addClass("red-number");
-            }
+                {
+                   $('#my-cart').html(res).addClass("red-number");               
+                }
             else{
-                $('#my-cart').removeClass("red-number");
-            }
-
+                    $('#my-cart').empty().removeClass("red-number");
+                }
         }
     });
 });
-
- 
 </script>
-  <script>
+<script>
     
         $(document).ready(function() {
                  $("#search").keyup(function(event) {
@@ -132,7 +122,7 @@ $(function showItemNumbers() {
                    $(".popup-overlay, .popup-content").removeClass("active");
                 }
              });
-    </script>
+</script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace eShop.Models
+namespace eShop.ViewModels
 {
     public class OrderViewModel
     {
